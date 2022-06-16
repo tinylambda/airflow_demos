@@ -1,0 +1,2 @@
+apache-airflow==2.3.2
+pre-commit==2.19.0  # https://github.com/pre-commit/pre-commit
