@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from airflow import DAG, macros
 from airflow.operators.python import PythonOperator
@@ -17,6 +18,7 @@ with DAG(
     "copy_db",
     default_args={},
     description="copy one db to another db",
+    start_date=datetime(2022, 7, 15),
     schedule_interval="@once",
     catchup=False,
     tags=["db", "copy"],
