@@ -26,7 +26,7 @@ with DAG(
     "copy_db",
     default_args={},
     description="copy one db to another db",
-    start_date=datetime(2022, 7, 15),
+    start_date=datetime(2022, 7, 1),
     schedule_interval=timedelta(days=1),
     catchup=False,
     tags=["db", "copy"],
