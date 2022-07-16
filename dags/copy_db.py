@@ -41,10 +41,10 @@ with DAG(
         python_callable=end,
     )
 
-    # t1 = PythonOperator(
-    #     task_id="copy_db",
-    #     python_callable=copy_db,
-    # )
+    t1 = PythonOperator(
+        task_id="copy_db",
+        python_callable=copy_db,
+    )
 
     # _start >> t1 >> _end
     _start >> _end
