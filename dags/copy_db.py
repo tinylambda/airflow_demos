@@ -6,6 +6,14 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.mysql.hooks.mysql import MySqlHook
 
 
+def start(ds=None, **kwargs):
+    return f"start execution on {ds}"
+
+
+def end(ds=None, **kwargs):
+    return f"End execution on {ds}"
+
+
 def copy_db(ds=None, **kwargs):
     mh_default = MySqlHook()
     mh_test = MySqlHook(mysql_conn_id="mysql_test")
@@ -23,9 +31,19 @@ with DAG(
     catchup=False,
     tags=["db", "copy"],
 ) as dag:
+    _start = PythonOperator(
+        task_id="start",
+        python_callable=start,
+    )
+
+    _end = PythonOperator(
+        task_id="end",
+        python_callable=end,
+    )
+
     t1 = PythonOperator(
         task_id="copy_db",
         python_callable=copy_db,
     )
 
-    t1
+    _start >> t1 >> _end
