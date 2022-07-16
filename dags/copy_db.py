@@ -46,5 +46,4 @@ with DAG(
         python_callable=copy_db,
     )
 
-    # _start >> t1 >> _end
-    _start >> _end
+    _start >> t1 >> _end
