@@ -21,6 +21,12 @@ def copy_db(ds=None, **kwargs):
     tables = mh_default.get_records("show tables")
     logging.info("tables: %s", tables)
 
+    for table in tables:
+        logging.info("processing table: %s", table)
+        columns = mh_default.get_records("show columns from :table", {"table": table})
+        for column in columns:
+            logging.info("column: %s", column)
+
 
 with DAG(
     "copy_db",
