@@ -23,7 +23,7 @@ def copy_db(ds=None, **kwargs):
 
     for table in tables:
         logging.info("processing table: %s", table)
-        columns = mh_default.get_records("show columns from :table", {"table": table})
+        columns = mh_default.get_records("show columns from %s", table)
         for column in columns:
             logging.info("column: %s", column)
 
