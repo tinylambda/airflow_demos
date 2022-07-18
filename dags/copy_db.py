@@ -38,6 +38,7 @@ def copy_db(ds=None, **kwargs):
         logging.info("processing table: %s", table_name)
         try:
             columns = mh_default.get_records(f"show columns from {table_name}")
+            logging.info("columns: %s", columns)
         except Exception as e:
             logging.error("catch error", exc_info=e)
             raise e
