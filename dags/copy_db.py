@@ -1,3 +1,4 @@
+import contextlib
 import logging
 from datetime import datetime, timedelta
 
@@ -28,10 +29,20 @@ def get_sync_table_names():
     return sync_table_names
 
 
+def try_wait_fetch(cursor):
+    try:
+        cursor.fetchall()
+    except Exception as e:
+        logging.info("IGNORE this exception", exc_info=e)
+
+
 def copy_db(ds=None, **kwargs):
     mh_default = MySqlHook()
     mh_test = MySqlHook(mysql_conn_id="mysql_test")
 
+    copy_batch = Variable.get("script_tables_sync_batch_size", "1000")
+    script_tables_sync_batch_size = int(copy_batch)
+    logging.info("sync tables sync batch size: %s", script_tables_sync_batch_size)
     sync_table_names = get_sync_table_names()
 
     for table_name in sync_table_names:
@@ -40,6 +51,14 @@ def copy_db(ds=None, **kwargs):
             create_table = mh_default.get_records(f"show create table {table_name}")
             create_table_sql = create_table[0][1]
             logging.info("create table sql: %s", create_table_sql)
+
+            with contextlib.closing(
+                mh_default.get_cursor()
+            ) as from_cursor, contextlib.closing(mh_test.get_cursor()) as to_cursor:
+                # drop table
+                to_cursor.execute(f"drop table if exists {table_name}")
+                to_cursor.execute(create_table)
+                try_wait_fetch(cursor=to_cursor)
 
             columns = mh_default.get_records(f"show columns from {table_name}")
             logging.info("columns: %s", columns)
