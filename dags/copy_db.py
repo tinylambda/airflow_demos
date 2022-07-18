@@ -57,7 +57,7 @@ def copy_db(ds=None, **kwargs):
             ) as from_cursor, contextlib.closing(mh_test.get_cursor()) as to_cursor:
                 # drop table
                 to_cursor.execute(f"drop table if exists {table_name}")
-                to_cursor.execute(create_table)
+                to_cursor.execute(create_table_sql)
                 try_wait_fetch(cursor=to_cursor)
 
             columns = mh_default.get_records(f"show columns from {table_name}")
