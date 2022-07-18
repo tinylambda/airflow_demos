@@ -38,7 +38,8 @@ def copy_db(ds=None, **kwargs):
         logging.info("processing table: %s", table_name)
         try:
             create_table = mh_default.get_records(f"show create table {table_name}")
-            logging.info("create table: %s", create_table)
+            create_table_sql = create_table[0][1]
+            logging.info("create table sql: %s", create_table_sql)
 
             columns = mh_default.get_records(f"show columns from {table_name}")
             logging.info("columns: %s", columns)
