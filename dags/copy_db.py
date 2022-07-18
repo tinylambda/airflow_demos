@@ -33,11 +33,13 @@ def copy_db(ds=None, **kwargs):
     mh_test = MySqlHook(mysql_conn_id="mysql_test")
 
     sync_table_names = get_sync_table_names()
-    sync_table_names.insert(0, "xxxxx")
 
     for table_name in sync_table_names:
         logging.info("processing table: %s", table_name)
         try:
+            create_table = mh_default.get_records(f"show create table {table_name}")
+            logging.info("create table: %s", create_table)
+
             columns = mh_default.get_records(f"show columns from {table_name}")
             logging.info("columns: %s", columns)
         except ProgrammingError as e:
