@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, timedelta
 
+from MySQLdb import ProgrammingError
 from airflow import DAG, macros
 from airflow.operators.python import PythonOperator
 from airflow.providers.mysql.hooks.mysql import MySqlHook
@@ -39,9 +40,13 @@ def copy_db(ds=None, **kwargs):
         try:
             columns = mh_default.get_records(f"show columns from {table_name}")
             logging.info("columns: %s", columns)
-        except Exception as e:
-            logging.error("catch error", exc_info=e)
-            raise e
+        except ProgrammingError as e:
+            error_code = e.args[0]
+            # table not exists
+            if error_code == 1146:
+                logging.error("table %s not exists skip it!", table_name, exc_info=e)
+            else:
+                raise e
 
 
 with DAG(
